@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fashion Outfit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .header-bg {
+            background-color: #f3f4f6;
+        }
+        .gradient-text {
+            background-image: linear-gradient(to right, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .carousel-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .carousel-image.active {
+            opacity: 1;
+        }
+        .drag-drop-area {
+            border: 2px dashed #d1d5db;
+            transition: border-color 0.3s ease-in-out;
+        }
+        .drag-drop-area.drag-over {
+            border-color: #8b5cf6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6">
+        <!-- Header Section -->
+        <div class="header-bg p-8 rounded-lg mb-6 text-center">
+            <h1 class="text-4xl sm:text-5xl font-extrabold gradient-text leading-tight mb-2">AI Fashion Outfit</h1>
+            <p class="text-gray-600">Virtually try on outfits and get personalized style critiques.</p>
+        </div>
+
+        <!-- Carousel -->
+        <div class="carousel-container mb-8">
+            <!-- You can replace these placeholder image URLs with your own base64 image data -->
+            <img src="https://placehold.co/800x300/e9d5ff/7c3aed?text=AI-Powered+Styling" alt="AI Powered Styling" class="carousel-image active">
+            <img src="https://placehold.co/800x300/dbeafe/1d4ed8?text=Instant+Outfit+Generation" alt="Instant Outfit Generation" class="carousel-image">
+            <img src="https://placehold.co/800x300/fecdd3/be185d?text=Personalized+Critiques" alt="Personalized Critiques" class="carousel-image">
+            <img src="https://placehold.co/800x300/d1fae5/065f46?text=Explore+New+Looks" alt="Explore New Looks" class="carousel-image">
+            <img src="https://placehold.co/800x300/fde68a/b45309?text=Try+Before+You+Buy" alt="Try Before You Buy" class="carousel-image">
+        </div>
+
+        <!-- Main Card Container -->
+        <div class="w-full">
+            <!-- Upload System -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                <!-- Model Photo Upload -->
+                <div id="main-upload-area" class="drag-drop-area p-6 rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:scale-105" data-file-type="main">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-4.586-4.586a2 2 0 00-2.828 0L6 14m-2 4h16M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p class="font-medium text-gray-700">Drag & Drop Model Photo</p>
+                    <p class="text-sm text-gray-500 mt-1">or <label for="mainImageInput" class="text-blue-600 cursor-pointer hover:underline">click to upload</label> (Required)</p>
+                    <input type="file" id="mainImageInput" accept="image/*" class="hidden" />
+                </div>
+                
+                <!-- Clothing Photo Upload -->
+                <div id="clothing-upload-area" class="drag-drop-area p-6 rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 transform hover:scale-105" data-file-type="clothing">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-4.586-4.586a2 2 0 00-2.828 0L6 14m-2 4h16M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p class="font-medium text-gray-700">Drag & Drop Outfit Photo</p>
+                    <p class="text-sm text-gray-500 mt-1">or <label for="clothingImageInput" class="text-blue-600 cursor-pointer hover:underline">click to upload</label> (Optional)</p>
+                    <input type="file" id="clothingImageInput" accept="image/*" class="hidden" />
+                </div>
+            </div>
+
+            <!-- Image Previews -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                <div id="mainImagePreviewContainer" class="hidden relative">
+                    <img id="mainImagePreview" src="" alt="Main Image Preview" class="w-full h-auto max-h-96 object-contain rounded-lg shadow-md mb-4" />
+                </div>
+                <div id="clothingImagePreviewContainer" class="hidden relative">
+                    <img id="clothingImagePreview" src="" alt="Clothing Image Preview" class="w-full h-auto max-h-96 object-contain rounded-lg shadow-md mb-4" />
+                </div>
+            </div>
+
+            <!-- Quick Style Templates -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Quick Style Templates</h2>
+                <div id="styleTemplates" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <!-- Templates will be injected here by JS -->
+                </div>
+            </div>
+
+            <!-- UI for prompt input -->
+            <div class="mb-6">
+                <label for="promptInput" class="block text-gray-700 font-medium mb-2">Instructions</label>
+                <textarea id="promptInput" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g., Change the shirt to red, Add sunglasses to the person, etc."></textarea>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
+                <button id="styleButton" class="bg-violet-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-violet-700 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    Generate Outfit
+                </button>
+                <button id="critiqueButton" class="bg-pink-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-pink-700 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    ✨ Get Outfit Critique
+                </button>
+            </div>
+
+            <!-- Loading indicator -->
+            <div id="loadingIndicator" class="hidden text-center text-gray-500">
+                <p>Processing image... Please wait.</p>
+            </div>
+
+            <!-- Result container for generated image -->
+            <div id="resultContainer" class="mt-6 hidden">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Your New Look</h2>
+                <img id="resultImage" src="" alt="Final Image" class="w-full h-auto max-h-96 object-contain rounded-lg shadow-md" />
+                <div class="flex justify-center mt-4 space-x-4">
+                    <button id="downloadButton" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-full shadow hover:bg-gray-300 transition-colors duration-300">Download Image</button>
+                    <button id="tryAgainButton" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-full shadow hover:bg-gray-300 transition-colors duration-300">Try Another Style</button>
+                </div>
+            </div>
+            
+            <!-- Result container for critique text -->
+            <div id="critiqueContainer" class="mt-6 hidden">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">AI Outfit Critique</h2>
+                <div id="critiqueText" class="p-4 bg-gray-50 rounded-lg border border-gray-200"></div>
+            </div>
+
+            <!-- Message box for errors -->
+            <div id="messageBox" class="hidden mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                <span class="block sm:inline" id="messageText"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainImageInput = document.getElementById('mainImageInput');
+            const clothingImageInput = document.getElementById('clothingImageInput');
+            const promptInput = document.getElementById('promptInput');
+            const styleButton = document.getElementById('styleButton');
+            const critiqueButton = document.getElementById('critiqueButton');
+            const mainImagePreview = document.getElementById('mainImagePreview');
+            const mainImagePreviewContainer = document.getElementById('mainImagePreviewContainer');
+            const clothingImagePreview = document.getElementById('clothingImagePreview');
+            const clothingImagePreviewContainer = document.getElementById('clothingImagePreviewContainer');
+            const resultImage = document.getElementById('resultImage');
+            const resultContainer = document.getElementById('resultContainer');
+            const critiqueContainer = document.getElementById('critiqueContainer');
+            const critiqueText = document.getElementById('critiqueText');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            const downloadButton = document.getElementById('downloadButton');
+            const tryAgainButton = document.getElementById('tryAgainButton');
+            const mainUploadArea = document.getElementById('main-upload-area');
+            const clothingUploadArea = document.getElementById('clothing-upload-area');
+            const styleTemplatesContainer = document.getElementById('styleTemplates');
+            
+            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+            let mainImageBase64Data = null;
+            let clothingImageBase64Data = null;
+
+            // Image Carousel Logic
+            const carouselImages = document.querySelectorAll('.carousel-image');
+            let currentImageIndex = 0;
+            setInterval(() => {
+                carouselImages[currentImageIndex].classList.remove('active');
+                currentImageIndex = (currentImageIndex + 1) % carouselImages.length;
+                carouselImages[currentImageIndex].classList.add('active');
+            }, 4000);
+
+            // Style Templates Data
+            const styleTemplates = [{
+                    name: "Evening Dress",
+                    prompt: "Change the outfit to an elegant evening gown.",
+                    image: "https://placehold.co/100x100/e9d5ff/7c3aed?text=Dress"
+                },
+                {
+                    name: "Casual Denim",
+                    prompt: "Change the outfit to a casual denim jacket and jeans.",
+                    image: "https://placehold.co/100x100/dbeafe/1d4ed8?text=Denim"
+                },
+                {
+                    name: "Business Suit",
+                    prompt: "Change the outfit to a professional business suit.",
+                    image: "https://placehold.co/100x100/fecdd3/be185d?text=Suit"
+                },
+                {
+                    name: "Athleisure",
+                    prompt: "Change the outfit to trendy athleisure wear, including track pants and a hoodie.",
+                    image: "https://placehold.co/100x100/d1fae5/065f46?text=Athleisure"
+                },
+                {
+                    name: "Boho Style",
+                    prompt: "Change the outfit to a bohemian style with a flowing dress and sandals.",
+                    image: "https://placehold.co/100x100/fde68a/b45309?text=Boho"
+                },
+                {
+                    name: "Streetwear",
+                    prompt: "Change the outfit to modern streetwear with oversized t-shirt and sneakers.",
+                    image: "https://placehold.co/100x100/e2e8f0/4a5568?text=Street"
+                }
+            ];
+
+            // Render Style Templates
+            styleTemplates.forEach((template, index) => {
+                const templateDiv = document.createElement('div');
+                templateDiv.className = 'cursor-pointer p-2 rounded-lg text-center transition-all duration-300 transform hover:scale-105 hover:bg-gray-100 border border-gray-200';
+                templateDiv.dataset.prompt = template.prompt;
+                templateDiv.innerHTML = `
+                    <img src="${template.image}" alt="${template.name}" class="w-16 h-16 mx-auto mb-2 rounded-full object-cover shadow-sm" />
+                    <p class="text-sm font-medium text-gray-700">${template.name}</p>
+                `;
+                templateDiv.addEventListener('click', () => {
+                    promptInput.value = template.prompt;
+                    const allTemplates = styleTemplatesContainer.querySelectorAll('div');
+                    allTemplates.forEach(t => t.classList.remove('border-purple-500', 'border-2'));
+                    templateDiv.classList.add('border-purple-500', 'border-2');
+                });
+                styleTemplatesContainer.appendChild(templateDiv);
+            });
+
+            // File Upload Logic (Click and Drag-and-Drop)
+            const handleFile = (file, type) => {
+                if (file.size > MAX_FILE_SIZE) {
+                    showMessage(`File size exceeds the 10MB limit. Please choose a smaller image.`);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const base64 = event.target.result.split(',')[1];
+                    if (type === 'main') {
+                        mainImagePreview.src = event.target.result;
+                        mainImagePreviewContainer.classList.remove('hidden');
+                        mainImageBase64Data = base64;
+                    } else if (type === 'clothing') {
+                        clothingImagePreview.src = event.target.result;
+                        clothingImagePreviewContainer.classList.remove('hidden');
+                        clothingImageBase64Data = base64;
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
+
+            [mainImageInput, clothingImageInput].forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const fileType = e.target.id === 'mainImageInput' ? 'main' : 'clothing';
+                        handleFile(file, fileType);
+                    }
+                });
+            });
+
+            [mainUploadArea, clothingUploadArea].forEach(area => {
+                area.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    area.classList.add('drag-over');
+                });
+                area.addEventListener('dragleave', () => {
+                    area.classList.remove('drag-over');
+                });
+                area.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    area.classList.remove('drag-over');
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                        const fileType = area.dataset.fileType;
+                        handleFile(file, fileType);
+                    }
+                });
+            });
+
+            styleButton.addEventListener('click', async () => {
+                if (!mainImageBase64Data) {
+                    showMessage("Please upload a model photo first.");
+                    return;
+                }
+
+                styleButton.disabled = true;
+                critiqueButton.disabled = true;
+                loadingIndicator.classList.remove('hidden');
+                resultContainer.classList.add('hidden');
+                critiqueContainer.classList.add('hidden');
+                hideMessage();
+
+                try {
+                    const response = await getStyledImage(mainImageBase64Data, clothingImageBase64Data, promptInput.value.trim());
+                    if (response) {
+                        resultImage.src = response;
+                        resultContainer.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error("API call failed:", error);
+                    showMessage("Failed to process the images. Please try again.");
+                } finally {
+                    styleButton.disabled = false;
+                    critiqueButton.disabled = false;
+                    loadingIndicator.classList.add('hidden');
+                }
+            });
+            
+            critiqueButton.addEventListener('click', async () => {
+                if (!mainImageBase64Data) {
+                    showMessage("Please upload a model photo first.");
+                    return;
+                }
+
+                styleButton.disabled = true;
+                critiqueButton.disabled = true;
+                loadingIndicator.classList.remove('hidden');
+                resultContainer.classList.add('hidden');
+                critiqueContainer.classList.add('hidden');
+                hideMessage();
+
+                try {
+                    const critique = await getOutfitCritique(mainImageBase64Data);
+                    critiqueText.textContent = critique;
+                    critiqueContainer.classList.remove('hidden');
+                } catch (error) {
+                    console.error("API call failed:", error);
+                    showMessage("Failed to get a critique. Please try again.");
+                } finally {
+                    styleButton.disabled = false;
+                    critiqueButton.disabled = false;
+                    loadingIndicator.classList.add('hidden');
+                }
+            });
+            
+            downloadButton.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.href = resultImage.src;
+                link.download = 'generated_outfit.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            tryAgainButton.addEventListener('click', () => {
+                mainImageBase64Data = null;
+                clothingImageBase64Data = null;
+                mainImagePreviewContainer.classList.add('hidden');
+                clothingImagePreviewContainer.classList.add('hidden');
+                resultContainer.classList.add('hidden');
+                critiqueContainer.classList.add('hidden');
+                promptInput.value = '';
+                mainImageInput.value = '';
+                clothingImageInput.value = '';
+                const allTemplates = styleTemplatesContainer.querySelectorAll('div');
+                allTemplates.forEach(t => t.classList.remove('border-purple-500', 'border-2'));
+                hideMessage();
+            });
+
+            async function getStyledImage(mainImageData, clothingImageData, prompt) {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+
+                let retryCount = 0;
+                const maxRetries = 3;
+                const baseDelay = 1000;
+
+                while (retryCount < maxRetries) {
+                    try {
+                        const parts = [];
+                        let finalPrompt = prompt;
+
+                        if (clothingImageData) {
+                            finalPrompt = `Make the person in the first image wear the clothes from the second image. ${prompt}`;
+                            parts.push({
+                                text: finalPrompt
+                            });
+                            parts.push({
+                                inlineData: {
+                                    mimeType: "image/png",
+                                    data: mainImageData
+                                }
+                            });
+                            parts.push({
+                                inlineData: {
+                                    mimeType: "image/png",
+                                    data: clothingImageData
+                                }
+                            });
+                        } else {
+                            parts.push({
+                                text: finalPrompt
+                            });
+                            parts.push({
+                                inlineData: {
+                                    mimeType: "image/png",
+                                    data: mainImageData
+                                }
+                            });
+                        }
+                        
+                        const payload = {
+                            contents: [{
+                                parts: parts
+                            }],
+                            generationConfig: {
+                                responseModalities: ['TEXT', 'IMAGE']
+                            }
+                        };
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 429 && retryCount < maxRetries - 1) {
+                                const delay = baseDelay * Math.pow(2, retryCount);
+                                await new Promise(res => setTimeout(res, delay));
+                                retryCount++;
+                                continue;
+                            }
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                        if (!base64Data) {
+                            throw new Error("No image data received from the API.");
+                        }
+                        return `data:image/png;base64,${base64Data}`;
+
+                    } catch (error) {
+                        if (retryCount < maxRetries - 1) {
+                            const delay = baseDelay * Math.pow(2, retryCount);
+                            await new Promise(res => setTimeout(res, delay));
+                            retryCount++;
+                            continue;
+                        } else {
+                            throw error;
+                        }
+                    }
+                }
+            }
+            
+            async function getOutfitCritique(imageData) {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                let retryCount = 0;
+                const maxRetries = 3;
+                const baseDelay = 1000;
+
+                while (retryCount < maxRetries) {
+                    try {
+                        const payload = {
+                            contents: [{
+                                parts: [{
+                                    text: "Analyze the outfit in this image and provide a concise, fashion-focused critique. Suggest one or two improvements."
+                                }, {
+                                    inlineData: {
+                                        mimeType: "image/png",
+                                        data: imageData
+                                    }
+                                }]
+                            }]
+                        };
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 429 && retryCount < maxRetries - 1) {
+                                const delay = baseDelay * Math.pow(2, retryCount);
+                                await new Promise(res => setTimeout(res, delay));
+                                retryCount++;
+                                continue;
+                            }
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        return result?.candidates?.[0]?.content?.parts?.[0]?.text || "No critique could be generated.";
+                    } catch (error) {
+                        if (retryCount < maxRetries - 1) {
+                            const delay = baseDelay * Math.pow(2, retryCount);
+                            await new Promise(res => setTimeout(res, delay));
+                            retryCount++;
+                            continue;
+                        } else {
+                            throw error;
+                        }
+                    }
+                }
+            }
+
+            function showMessage(text) {
+                messageText.textContent = text;
+                messageBox.classList.remove('hidden');
+            }
+
+            function hideMessage() {
+                messageBox.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
